@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
 from .forms import CustomUserCreationForm, CustomUserChangeForm
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 class HomeView(TemplateView):
@@ -45,20 +46,17 @@ class UserUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(SuccessMessageMixin, DeleteView):
     model = User
     template_name = 'core/user_confirm_delete.html'
     success_url = reverse_lazy('user_list')
+    success_message = 'Пользователь успешно удален'
 
     def dispatch(self, request, *args, **kwargs):
         if self.get_object() != request.user:
             messages.error(request, 'У вас нет прав для удаления пользователя')
             return redirect('user_list')
         return super().dispatch(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(request, 'Пользователь успешно удален')
-        return super().delete(request, *args, **kwargs)
 
 
 class UserLoginView(LoginView):
