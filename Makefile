@@ -1,5 +1,6 @@
 install:
-	uv run pip install -r uv.loc
+	uv run pip install --upgrade pip
+	uv run pip install .
 
 collectstatic:
 	uv run python manage.py collectstatic --noinput
@@ -11,4 +12,4 @@ build:
 	./build.sh
 
 render-start:
-	gunicorn task_manager.wsgi
+	uv run gunicorn task_manager.wsgi
