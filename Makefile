@@ -1,5 +1,6 @@
 install:
 	uv run pip install --upgrade pip
+	uv run pip install django-bootstrap5
 	uv run pip install .
 
 collectstatic:
