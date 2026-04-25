@@ -2,8 +2,9 @@ from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.contrib.auth.views import LoginView, LogoutView
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
+from django.contrib.auth.views import LoginView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, View
+from django.contrib.auth import logout
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.contrib.messages.views import SuccessMessageMixin
 
@@ -61,15 +62,18 @@ class UserDeleteView(SuccessMessageMixin, DeleteView):
 
 class UserLoginView(LoginView):
     template_name = 'core/login.html'
+    success_url = reverse_lazy('home')
 
     def form_valid(self, form):
         messages.success(self.request, 'Вы залогинены')
         return super().form_valid(form)
 
 
-class UserLogoutView(LogoutView):
-    next_page = reverse_lazy('login')
-
-    def dispatch(self, request, *args, **kwargs):
+class UserLogoutView(View):
+    """
+    Logout через POST. После редиректа на home сообщения сохраняются.
+    """
+    def post(self, request, *args, **kwargs):
+        logout(request)
         messages.success(request, 'Вы разлогинены')
-        return super().dispatch(request, *args, **kwargs)
+        return redirect('home')
