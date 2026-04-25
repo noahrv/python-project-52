@@ -1,4 +1,4 @@
 from django.http import HttpResponse
 
 def home(request):
-    return HttpResponse("Привет! Проект Django успешно создан.")
+    return HttpResponse("Hello, Hexlet!")
