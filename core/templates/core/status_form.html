@@ -1,0 +1,13 @@
+
+{% extends 'core/home.html' %}
+{% block content %}
+<h1>{% if object %}Изменить{% else %}Создать{% endif %} статус</h1>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_name" class="form-label">Имя</label>
+        {{ form.name }}
+    </div>
+    <button type="submit" class="btn btn-primary">{% if object %}Изменить{% else %}Создать{% endif %}</button>
+</form>
+{% endblock %}

@@ -1,0 +1,25 @@
+
+{% extends 'core/home.html' %}
+{% block content %}
+<h1>Статусы</h1>
+<a class="btn btn-primary mb-3" href="{% url 'status_create' %}">Создать статус</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for status in statuses %}
+        <tr>
+            <td>{{ status.name }}</td>
+            <td>
+                <a href="{% url 'status_update' status.pk %}">Изменить</a>
+                <a href="{% url 'status_delete' status.pk %}">Удалить</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,30 @@
+[
+    {
+        "model": "core.status",
+        "pk": 1,
+        "fields": {
+            "name": "новый"
+        }
+    },
+    {
+        "model": "core.status",
+        "pk": 2,
+        "fields": {
+            "name": "в работе"
+        }
+    },
+    {
+        "model": "core.status",
+        "pk": 3,
+        "fields": {
+            "name": "на тестировании"
+        }
+    },
+    {
+        "model": "core.status",
+        "pk": 4,
+        "fields": {
+            "name": "завершен"
+        }
+    }
+]
