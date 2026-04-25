@@ -1,10 +1,4 @@
-from django.http import HttpResponse
-from django.views.generic import TemplateView
-
+from django.shortcuts import render
 
 def home(request):
-    return HttpResponse("Hello, Hexlet!")
-
-
-class HomeView(TemplateView):
-    template_name = "core/home.html"
+    return render(request, 'core/home.html')
