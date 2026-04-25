@@ -1,0 +1,39 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+<div class="container mt-4">
+
+    <h1>Вход</h1>
+
+    {# Flash-сообщения #}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <button type="submit" class="btn btn-primary mt-2">Войти</button>
+    </form>
+
+    <div class="mt-3">
+        <a href="{% url 'user_create' %}">Регистрация</a> |
+        <a href="{% url 'user_list' %}">Пользователи</a>
+    </div>
+
+</div>
+</body>
+</html>

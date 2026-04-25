@@ -1,6 +1,7 @@
 {% load django_bootstrap5 %}
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Hexlet Task Manager</title>
@@ -8,20 +9,33 @@
     {% bootstrap_javascript %}
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Менеджер задач</a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="#">Пользователи</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Вход</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Регистрация</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
 <div class="container mt-4">
-  <h1>Добро пожаловать в Hexlet Task Manager</h1>
+
+    {# Flash-сообщения #}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <nav class="mb-4">
+        <a href="{% url 'user_list' %}" class="me-3">Пользователи</a>
+        {% if request.user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link p-0 text-danger">Выход</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" class="me-3">Вход</a>
+            <a href="{% url 'user_create' %}">Регистрация</a>
+        {% endif %}
+    </nav>
+
+    <h1>Добро пожаловать в Hexlet Task Manager</h1>
+
 </div>
 </body>
 </html>

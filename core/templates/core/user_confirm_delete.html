@@ -1,0 +1,35 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Удалить пользователя?</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+<div class="container mt-4">
+
+    <h1>Удалить пользователя?</h1>
+
+    {# Flash-сообщения #}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <p>Вы уверены, что хотите удалить пользователя <strong>{{ object.username }}</strong>?</p>
+        <button type="submit" class="btn btn-danger">Да, удалить</button>
+        <a href="{% url 'user_list' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+
+</div>
+</body>
+</html>
