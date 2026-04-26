@@ -10,7 +10,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret")
 DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "python-project-52-bcky.onrender.com", "webserver"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "python-project-52-bcky.onrender.com",
+    "webserver",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
