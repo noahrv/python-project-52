@@ -24,23 +24,23 @@ class Task(models.Model):
     status = models.ForeignKey(
         Status,
         on_delete=models.PROTECT,
-        related_name='tasks',
+        related_name="tasks",
     )
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
-        related_name='created_tasks',
+        related_name="created_tasks",
     )
     executor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
-        related_name='assigned_tasks',
+        related_name="assigned_tasks",
         null=True,
         blank=True,
     )
     labels = models.ManyToManyField(
         Label,
-        related_name='tasks',
+        related_name="tasks",
         blank=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)

@@ -8,17 +8,23 @@ from .models import Label, Status, Task
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'password1', 'password2')
+        fields = (
+            "first_name",
+            "last_name",
+            "username",
+            "password1",
+            "password2",
+        )
         labels = {
-            'first_name': 'Имя',
-            'last_name': 'Фамилия',
-            'username': 'Имя пользователя',
-            'password1': 'Пароль',
-            'password2': 'Подтверждение пароля',
+            "first_name": "Имя",
+            "last_name": "Фамилия",
+            "username": "Имя пользователя",
+            "password1": "Пароль",
+            "password2": "Подтверждение пароля",
         }
         error_messages = {
-            'username': {
-                'unique': 'Пользователь с таким именем уже существует',
+            "username": {
+                "unique": "Пользователь с таким именем уже существует",
             },
         }
 
@@ -26,17 +32,23 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserChangeForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'password1', 'password2')
+        fields = (
+            "first_name",
+            "last_name",
+            "username",
+            "password1",
+            "password2",
+        )
         labels = {
-            'first_name': 'Имя',
-            'last_name': 'Фамилия',
-            'username': 'Имя пользователя',
-            'password1': 'Пароль',
-            'password2': 'Подтверждение пароля',
+            "first_name": "Имя",
+            "last_name": "Фамилия",
+            "username": "Имя пользователя",
+            "password1": "Пароль",
+            "password2": "Подтверждение пароля",
         }
         error_messages = {
-            'username': {
-                'unique': 'Пользователь с таким именем уже существует',
+            "username": {
+                "unique": "Пользователь с таким именем уже существует",
             },
         }
 
@@ -44,13 +56,13 @@ class CustomUserChangeForm(UserCreationForm):
 class StatusForm(forms.ModelForm):
     class Meta:
         model = Status
-        fields = ['name']
+        fields = ["name"]
         labels = {
-            'name': 'Имя',
+            "name": "Имя",
         }
         error_messages = {
-            'name': {
-                'unique': 'Статус с таким именем уже существует',
+            "name": {
+                "unique": "Статус с таким именем уже существует",
             },
         }
 
@@ -58,13 +70,13 @@ class StatusForm(forms.ModelForm):
 class LabelForm(forms.ModelForm):
     class Meta:
         model = Label
-        fields = ['name']
+        fields = ["name"]
         labels = {
-            'name': 'Имя',
+            "name": "Имя",
         }
         error_messages = {
-            'name': {
-                'unique': 'Метка с таким именем уже существует',
+            "name": {
+                "unique": "Метка с таким именем уже существует",
             },
         }
 
@@ -73,25 +85,25 @@ class TaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['executor'].label_from_instance = (
+        self.fields["executor"].label_from_instance = (
             lambda user: user.get_full_name() or user.username
         )
 
     class Meta:
         model = Task
-        fields = ['name', 'description', 'status', 'executor', 'labels']
+        fields = ["name", "description", "status", "executor", "labels"]
         labels = {
-            'name': 'Имя',
-            'description': 'Описание',
-            'status': 'Статус',
-            'executor': 'Исполнитель',
-            'labels': 'Метки',
+            "name": "Имя",
+            "description": "Описание",
+            "status": "Статус",
+            "executor": "Исполнитель",
+            "labels": "Метки",
         }
         error_messages = {
-            'name': {
-                'unique': 'Задача с таким именем уже существует',
+            "name": {
+                "unique": "Задача с таким именем уже существует",
             },
         }
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
+            "description": forms.Textarea(attrs={"rows": 4}),
         }

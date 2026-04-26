@@ -8,73 +8,73 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0001_initial'),
+        ("core", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Label',
+            name="Label",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name='ID',
+                        verbose_name="ID",
                     ),
                 ),
-                ('name', models.CharField(max_length=255, unique=True)),
+                ("name", models.CharField(max_length=255, unique=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Task',
+            name="Task",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name='ID',
+                        verbose_name="ID",
                     ),
                 ),
-                ('name', models.CharField(max_length=255, unique=True)),
-                ('description', models.TextField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ("name", models.CharField(max_length=255, unique=True)),
+                ("description", models.TextField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
                 (
-                    'author',
+                    "author",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.PROTECT,
-                        related_name='created_tasks',
+                        related_name="created_tasks",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
                 (
-                    'executor',
+                    "executor",
                     models.ForeignKey(
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.PROTECT,
-                        related_name='assigned_tasks',
+                        related_name="assigned_tasks",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
                 (
-                    'labels',
+                    "labels",
                     models.ManyToManyField(
                         blank=True,
-                        related_name='tasks',
-                        to='core.label',
+                        related_name="tasks",
+                        to="core.label",
                     ),
                 ),
                 (
-                    'status',
+                    "status",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.PROTECT,
-                        related_name='tasks',
-                        to='core.status',
+                        related_name="tasks",
+                        to="core.status",
                     ),
                 ),
             ],
