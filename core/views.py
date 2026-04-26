@@ -84,9 +84,11 @@ class UserDeleteView(SuccessMessageMixin, DeleteView):
         except ProtectedError:
             messages.error(
                 self.request,
-                "Невозможно удалить пользователя, "
-                "потому что он связан с задачами",
-            ),
+                (
+                    "Невозможно удалить пользователя, "
+                    "потому что он связан с задачами"
+                ),
+            )
             return redirect(self.success_url)
 
 

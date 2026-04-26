@@ -4,15 +4,18 @@ from django.urls import reverse
 
 from .models import Label, Status, Task
 
+TEST_USER_PASSWORD = "testpass123"
+
 
 class TaskCrudTest(TestCase):
     def setUp(self):
         self.author = User.objects.create_user(
             username="author",
-            password="password",
+            password=TEST_USER_PASSWORD,
         )
         self.other_user = User.objects.create_user(
-            username="other", password="password"
+            username="other",
+            password=TEST_USER_PASSWORD,
         )
         self.status = Status.objects.create(name="Новый")
         self.label = Label.objects.create(name="bug")
