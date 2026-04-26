@@ -34,15 +34,16 @@ jobs:
         run: |
           uv run python manage.py migrate
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
-          uv run python manage.py test
+          uv run coverage run manage.py test
+          uv run coverage xml
 
       - name: Run linter
         run: |
           uv run ruff check .
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
