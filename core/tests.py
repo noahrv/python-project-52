@@ -78,7 +78,9 @@ class TaskCrudTest(TestCase):
         )
         self.client.force_login(self.other_user)
 
-        response = self.client.post(reverse("task_delete", kwargs={"pk": task.pk}))
+        response = self.client.post(
+            reverse("task_delete", kwargs={"pk": task.pk})
+        )
 
         self.assertRedirects(response, reverse("task_list"))
         self.assertTrue(Task.objects.filter(pk=task.pk).exists())
@@ -92,7 +94,9 @@ class TaskCrudTest(TestCase):
         )
         self.client.force_login(self.author)
 
-        response = self.client.post(reverse("task_delete", kwargs={"pk": task.pk}))
+        response = self.client.post(
+            reverse("task_delete", kwargs={"pk": task.pk})
+        )
 
         self.assertRedirects(response, reverse("task_list"))
         self.assertFalse(Task.objects.filter(pk=task.pk).exists())
@@ -295,7 +299,9 @@ class TaskCrudTest(TestCase):
         status = Status.objects.create(name="Удаляемый")
         self.client.force_login(self.author)
 
-        response = self.client.post(reverse("status_delete", kwargs={"pk": status.pk}))
+        response = self.client.post(
+            reverse("status_delete", kwargs={"pk": status.pk})
+        )
 
         self.assertRedirects(response, reverse("status_list"))
         self.assertFalse(Status.objects.filter(pk=status.pk).exists())
@@ -310,7 +316,9 @@ class TaskCrudTest(TestCase):
         )
         self.client.force_login(self.author)
 
-        response = self.client.post(reverse("status_delete", kwargs={"pk": status.pk}))
+        response = self.client.post(
+            reverse("status_delete", kwargs={"pk": status.pk})
+        )
 
         self.assertRedirects(response, reverse("status_list"))
         self.assertTrue(Status.objects.filter(pk=status.pk).exists())
@@ -343,7 +351,9 @@ class TaskCrudTest(TestCase):
         label = Label.objects.create(name="Удаляемая")
         self.client.force_login(self.author)
 
-        response = self.client.post(reverse("label_delete", kwargs={"pk": label.pk}))
+        response = self.client.post(
+            reverse("label_delete", kwargs={"pk": label.pk})
+        )
 
         self.assertRedirects(response, reverse("label_list"))
         self.assertFalse(Label.objects.filter(pk=label.pk).exists())
@@ -360,7 +370,9 @@ class TaskCrudTest(TestCase):
 
         self.client.force_login(self.author)
 
-        response = self.client.post(reverse("label_delete", kwargs={"pk": label.pk}))
+        response = self.client.post(
+            reverse("label_delete", kwargs={"pk": label.pk})
+        )
 
         self.assertRedirects(response, reverse("label_list"))
         self.assertTrue(Label.objects.filter(pk=label.pk).exists())

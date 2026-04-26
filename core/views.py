@@ -84,7 +84,8 @@ class UserDeleteView(SuccessMessageMixin, DeleteView):
         except ProtectedError:
             messages.error(
                 self.request,
-                "Невозможно удалить пользователя, " "потому что он связан с задачами",
+                "Невозможно удалить пользователя, "
+                "потому что он связан с задачами",
             ),
             return redirect(self.success_url)
 
@@ -279,7 +280,9 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect_to_login(request.get_full_path(), self.get_login_url())
+            return redirect_to_login(
+                request.get_full_path(), self.get_login_url()
+            )
 
         task = self.get_object()
         if task.author != request.user:
