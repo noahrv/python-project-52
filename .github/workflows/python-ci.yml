@@ -1,0 +1,40 @@
+name: Python CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install uv
+          make install
+
+      - name: Run migrations
+        run: |
+          uv run python manage.py migrate
+
+      - name: Run tests
+        run: |
+          uv run python manage.py test
+
+      - name: Run linter
+        run: |
+          uv run ruff check .
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
