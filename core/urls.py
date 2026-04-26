@@ -23,8 +23,6 @@ from .views import (
     UserUpdateView,
 )
 
-from .views import test_error
-
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('users/', UserListView.as_view(), name='user_list'),
