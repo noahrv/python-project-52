@@ -9,6 +9,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      SECRET_KEY: test-secret-key
+      DEBUG: "True"
+      DATABASE_URL: sqlite:///db.sqlite3
+      ROLLBAR_ACCESS_TOKEN: fake-token
+
     steps:
       - uses: actions/checkout@v3
         with:
