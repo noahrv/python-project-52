@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Status, Task
+from .models import Label, Status, Task
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -55,6 +55,20 @@ class StatusForm(forms.ModelForm):
         error_messages = {
             'name': {
                 'unique': 'Статус с таким именем уже существует',
+            },
+        }
+
+
+class LabelForm(forms.ModelForm):
+    class Meta:
+        model = Label
+        fields = ['name']
+        labels = {
+            'name': 'Имя',
+        }
+        error_messages = {
+            'name': {
+                'unique': 'Метка с таким именем уже существует',
             },
         }
 
