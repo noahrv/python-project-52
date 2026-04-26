@@ -297,3 +297,12 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
     def form_valid(self, form):
         messages.success(self.request, 'Задача успешно удалена')
         return super().form_valid(form)
+
+
+
+from django.http import HttpResponse
+
+def test_error(request):
+    a = None
+    a.hello()
+    return HttpResponse("ok")
