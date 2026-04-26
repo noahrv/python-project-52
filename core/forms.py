@@ -6,10 +6,6 @@ from .models import Label, Status, Task
 
 
 class CustomUserCreationForm(UserCreationForm):
-    error_messages = {
-        'duplicate_username': 'Пользователь с таким именем уже существует',
-    }
-
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'username', 'password1', 'password2')

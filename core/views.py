@@ -1,9 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.views import redirect_to_login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, redirect_to_login
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import ProtectedError
 from django.shortcuts import redirect
@@ -139,13 +138,19 @@ class StatusDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'core/status_confirm_delete.html'
     success_url = reverse_lazy('status_list')
 
-    def form_valid(self, form):
+    def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         if self.object.tasks.exists():
-            messages.error(self.request, 'Невозможно удалить статус')
+            messages.error(
+                request,
+                'Невозможно удалить статус, потому что он используется',
+            )
             return redirect('status_list')
 
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
         messages.success(self.request, 'Статус успешно удален')
         return super().form_valid(form)
 
@@ -183,13 +188,19 @@ class LabelDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'core/label_confirm_delete.html'
     success_url = reverse_lazy('label_list')
 
-    def form_valid(self, form):
+    def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         if self.object.tasks.exists():
-            messages.error(self.request, 'Невозможно удалить метку')
+            messages.error(
+                request,
+                'Невозможно удалить метку, потому что она используется',
+            )
             return redirect('label_list')
 
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
         messages.success(self.request, 'Метка успешно удалена')
         return super().form_valid(form)
 
@@ -198,9 +209,39 @@ class TaskListView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'core/task_list.html'
     context_object_name = 'tasks'
-    queryset = Task.objects.select_related(
-        'status', 'author', 'executor'
-    ).prefetch_related('labels')
+
+    def get_queryset(self):
+        queryset = Task.objects.select_related(
+            'status',
+            'author',
+            'executor',
+        ).prefetch_related('labels')
+
+        status_id = self.request.GET.get('status')
+        executor_id = self.request.GET.get('executor')
+        label_id = self.request.GET.get('label')
+        self_tasks = self.request.GET.get('self_tasks')
+
+        if status_id:
+            queryset = queryset.filter(status_id=status_id)
+
+        if executor_id:
+            queryset = queryset.filter(executor_id=executor_id)
+
+        if label_id:
+            queryset = queryset.filter(labels__id=label_id)
+
+        if self_tasks:
+            queryset = queryset.filter(author=self.request.user)
+
+        return queryset.distinct()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['statuses'] = Status.objects.all()
+        context['executors'] = User.objects.all()
+        context['labels'] = Label.objects.all()
+        return context
 
 
 class TaskDetailView(LoginRequiredMixin, DetailView):
@@ -208,7 +249,9 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
     template_name = 'core/task_detail.html'
     context_object_name = 'task'
     queryset = Task.objects.select_related(
-        'status', 'author', 'executor'
+        'status',
+        'author',
+        'executor',
     ).prefetch_related('labels')
 
 
@@ -248,6 +291,7 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
         if task.author != request.user:
             messages.error(request, 'Задачу может удалить только ее автор')
             return redirect('task_list')
+
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):

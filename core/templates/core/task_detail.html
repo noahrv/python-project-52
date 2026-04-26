@@ -1,23 +1,48 @@
 {% extends 'core/home.html' %}
 
 {% block content %}
-<h1>{{ task.name }}</h1>
+<h1 class="my-4">Просмотр задачи</h1>
 
-<p><strong>Описание</strong></p>
-<p>{{ task.description|linebreaksbr }}</p>
+<div class="card">
+    <div class="card-header bg-secondary text-white">
+        <h2 class="h4 mb-0">{{ task.name }}</h2>
+    </div>
 
-<p><strong>Статус:</strong> {{ task.status }}</p>
-<p><strong>Автор:</strong> {{ task.author }}</p>
-<p><strong>Исполнитель:</strong> {{ task.executor|default:'-' }}</p>
-<p>
-    <strong>Метки:</strong>
-    {% for label in task.labels.all %}
-        {{ label.name }}{% if not forloop.last %}, {% endif %}
-    {% empty %}
-        -
-    {% endfor %}
-</p>
+    <div class="card-body">
+        <p>{{ task.description|linebreaksbr }}</p>
 
-<a href="{% url 'task_update' task.pk %}">Изменить</a>
-<a href="{% url 'task_delete' task.pk %}">Удалить</a>
+        <hr>
+
+        <dl class="row">
+            <dt class="col-sm-6">Автор</dt>
+            <dd class="col-sm-6">{{ task.author }}</dd>
+
+            <dt class="col-sm-6">Исполнитель</dt>
+            <dd class="col-sm-6">{{ task.executor|default:'-' }}</dd>
+
+            <dt class="col-sm-6">Статус</dt>
+            <dd class="col-sm-6">{{ task.status }}</dd>
+
+            <dt class="col-sm-6">Дата создания</dt>
+            <dd class="col-sm-6">{{ task.created_at|date:'d.m.Y H:i' }}</dd>
+
+            <dt class="col-sm-6">Метки:</dt>
+            <dd class="col-sm-6">
+                {% if task.labels.all %}
+                    <ul class="mb-0">
+                        {% for label in task.labels.all %}
+                            <li>{{ label.name }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    -
+                {% endif %}
+            </dd>
+        </dl>
+
+        <a href="{% url 'task_update' task.pk %}">Изменить</a>
+        <br>
+        <a href="{% url 'task_delete' task.pk %}">Удалить</a>
+    </div>
+</div>
 {% endblock %}

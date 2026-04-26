@@ -2,7 +2,7 @@
 {% load django_bootstrap5 %}
 
 {% block content %}
-<h1>{% if object %}Изменение метки{% else %}Создать метку{% endif %}</h1>
+<h1 class="my-4">{% if object %}Изменение метки{% else %}Создать метку{% endif %}</h1>
 
 <form method="post">
     {% csrf_token %}

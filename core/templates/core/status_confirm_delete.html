@@ -1,8 +1,10 @@
-
 {% extends 'core/home.html' %}
+
 {% block content %}
-<h1>Удалить статус</h1>
+<h1 class="my-4">Удалить статус</h1>
+
 <p>Вы уверены, что хотите удалить статус "{{ object.name }}"?</p>
+
 <form method="post">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger">Да, удалить</button>
