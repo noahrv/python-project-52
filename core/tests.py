@@ -1,54 +1,133 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth.models import User
-from .models import Status
+
+from .models import Label, Status, Task
 
 
-class StatusCRUDTest(TestCase):
-    fixtures = ['users.json']
-
+class TaskCrudTest(TestCase):
     def setUp(self):
-        self.user = User.objects.get(username='testuser')
-        self.user.set_password('pass123')
-        self.user.save()
+        self.author = User.objects.create_user(username='author', password='password')
+        self.other_user = User.objects.create_user(
+            username='other', password='password'
+        )
+        self.status = Status.objects.create(name='Новый')
+        self.label = Label.objects.create(name='bug')
 
-        self.status = Status.objects.create(name='новый')
+    def test_login_required_for_task_list(self):
+        response = self.client.get(reverse('task_list'))
 
-    def test_status_list_requires_login(self):
-        response = self.client.get(reverse('status_list'))
-        self.assertRedirects(response, f'/login/?next={reverse("status_list")}')
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/login/', response.url)
 
-    def test_create_status(self):
-        self.client.login(username='testuser', password='pass123')
-        response = self.client.post(reverse('status_create'), {'name': 'в работе'})
-        self.assertRedirects(response, reverse('status_list'))
-        self.assertTrue(Status.objects.filter(name='в работе').exists())
-        messages = list(response.wsgi_request._messages)
-        self.assertTrue(any('Статус успешно создан' in str(m) for m in messages))
+    def test_create_task(self):
+        self.client.force_login(self.author)
 
-    def test_update_status(self):
-        self.client.login(username='testuser', password='pass123')
-        response = self.client.post(reverse('status_update', args=[self.status.pk]), {'name': 'на тестировании'})
-        self.assertRedirects(response, reverse('status_list'))
-        self.status.refresh_from_db()
-        self.assertEqual(self.status.name, 'на тестировании')
-        messages = list(response.wsgi_request._messages)
-        self.assertTrue(any('Статус успешно изменен' in str(m) for m in messages))
+        response = self.client.post(
+            reverse('task_create'),
+            {
+                'name': 'Первая задача',
+                'description': 'Описание задачи',
+                'status': self.status.id,
+                'executor': self.other_user.id,
+                'labels': [self.label.id],
+            },
+        )
 
-    def test_delete_status(self):
-        self.client.login(username='testuser', password='pass123')
-        response = self.client.post(reverse('status_delete', args=[self.status.pk]))
-        self.assertRedirects(response, reverse('status_list'))
-        self.assertFalse(Status.objects.filter(pk=self.status.pk).exists())
-        messages = list(response.wsgi_request._messages)
-        self.assertTrue(any('Статус успешно удален' in str(m) for m in messages))
+        self.assertRedirects(response, reverse('task_list'))
+        task = Task.objects.get(name='Первая задача')
+        self.assertEqual(task.author, self.author)
+        self.assertEqual(task.executor, self.other_user)
+        self.assertEqual(task.description, 'Описание задачи')
+        self.assertEqual(list(task.labels.all()), [self.label])
 
-    def test_access_control_for_anonymous(self):
-        urls = [
-            reverse('status_create'),
-            reverse('status_update', args=[self.status.pk]),
-            reverse('status_delete', args=[self.status.pk]),
-        ]
-        for url in urls:
-            response = self.client.get(url)
-            self.assertRedirects(response, f'/login/?next={url}')
+    def test_update_task(self):
+        task = Task.objects.create(
+            name='Старое имя',
+            description='Старое описание',
+            status=self.status,
+            author=self.author,
+        )
+        self.client.force_login(self.other_user)
+
+        response = self.client.post(
+            reverse('task_update', kwargs={'pk': task.pk}),
+            {
+                'name': 'Новое имя',
+                'description': 'Новое описание',
+                'status': self.status.id,
+                'executor': self.other_user.id,
+                'labels': [self.label.id],
+            },
+        )
+
+        self.assertRedirects(response, reverse('task_list'))
+        task.refresh_from_db()
+        self.assertEqual(task.name, 'Новое имя')
+        self.assertEqual(task.executor, self.other_user)
+
+    def test_only_author_can_delete_task(self):
+        task = Task.objects.create(
+            name='Нельзя удалить',
+            description='',
+            status=self.status,
+            author=self.author,
+        )
+        self.client.force_login(self.other_user)
+
+        response = self.client.post(reverse('task_delete', kwargs={'pk': task.pk}))
+
+        self.assertRedirects(response, reverse('task_list'))
+        self.assertTrue(Task.objects.filter(pk=task.pk).exists())
+
+    def test_author_can_delete_task(self):
+        task = Task.objects.create(
+            name='Можно удалить',
+            description='',
+            status=self.status,
+            author=self.author,
+        )
+        self.client.force_login(self.author)
+
+        response = self.client.post(reverse('task_delete', kwargs={'pk': task.pk}))
+
+        self.assertRedirects(response, reverse('task_list'))
+        self.assertFalse(Task.objects.filter(pk=task.pk).exists())
+
+    def test_user_linked_with_task_cannot_be_deleted(self):
+        Task.objects.create(
+            name='Связанная задача',
+            description='',
+            status=self.status,
+            author=self.author,
+        )
+        self.client.force_login(self.author)
+
+        response = self.client.post(
+            reverse('user_delete', kwargs={'pk': self.author.pk})
+        )
+
+        self.assertRedirects(response, reverse('user_list'))
+        self.assertTrue(User.objects.filter(pk=self.author.pk).exists())
+
+    def test_task_name_must_be_unique(self):
+        Task.objects.create(
+            name='Дубликат',
+            description='',
+            status=self.status,
+            author=self.author,
+        )
+        self.client.force_login(self.author)
+
+        response = self.client.post(
+            reverse('task_create'),
+            {
+                'name': 'Дубликат',
+                'description': '',
+                'status': self.status.id,
+                'executor': '',
+                'labels': [],
+            },
+        )
+
+        self.assertContains(response, 'уже существует')

@@ -1,8 +1,8 @@
 from django import forms
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from .models import Status
+from .models import Status, Task
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -58,14 +58,23 @@ class StatusForm(forms.ModelForm):
             },
         }
 
-    def clean_name(self):
-        name = self.cleaned_data['name']
-        queryset = Status.objects.filter(name=name)
 
-        if self.instance.pk:
-            queryset = queryset.exclude(pk=self.instance.pk)
-
-        if queryset.exists():
-            raise forms.ValidationError('Статус с таким именем уже существует')
-
-        return name
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['name', 'description', 'status', 'executor', 'labels']
+        labels = {
+            'name': 'Имя',
+            'description': 'Описание',
+            'status': 'Статус',
+            'executor': 'Исполнитель',
+            'labels': 'Метки',
+        }
+        error_messages = {
+            'name': {
+                'unique': 'Задача с таким именем уже существует',
+            },
+        }
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+        }
