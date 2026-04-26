@@ -138,19 +138,16 @@ class StatusDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'core/status_confirm_delete.html'
     success_url = reverse_lazy('status_list')
 
-    def dispatch(self, request, *args, **kwargs):
+    def form_valid(self, form):
         self.object = self.get_object()
 
         if self.object.tasks.exists():
             messages.error(
-                request,
+                self.request,
                 'Невозможно удалить статус, потому что он используется',
             )
             return redirect('status_list')
 
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
         messages.success(self.request, 'Статус успешно удален')
         return super().form_valid(form)
 
@@ -188,19 +185,16 @@ class LabelDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'core/label_confirm_delete.html'
     success_url = reverse_lazy('label_list')
 
-    def dispatch(self, request, *args, **kwargs):
+    def form_valid(self, form):
         self.object = self.get_object()
 
         if self.object.tasks.exists():
             messages.error(
-                request,
+                self.request,
                 'Невозможно удалить метку, потому что она используется',
             )
             return redirect('label_list')
 
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
         messages.success(self.request, 'Метка успешно удалена')
         return super().form_valid(form)
 
